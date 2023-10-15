@@ -40,6 +40,9 @@ public:
 	}
 	void RunAttack( cObject *enemy )
 	{
+		if ( !enemy )
+			return;
+
 		const float fDelay = 50.0f;
 		static float fLastAttack = 0.0f;
 
@@ -55,6 +58,9 @@ public:
 	}
 	bool CheckCollider( cObject *oTarget )
 	{
+		if ( !oTarget )
+			return false;
+
 		return Util::bIsRectColliding( { vPosition.x, vPosition.y, fSize, fSize }, { oTarget->vPosition.x, oTarget->vPosition.y, oTarget->fSize, oTarget->fSize } );
 	}
 	std::string GetTag( )
@@ -84,7 +90,7 @@ public:
 	{
 		return vecObjects.size( );
 	}
-	std::vector<cObject*> GetObjectsList( )
+	std::vector<cObject *> GetObjectsList( )
 	{
 		std::vector<cObject *> vecReturn { };
 		if ( !vecObjects.size( ) )
@@ -128,12 +134,15 @@ public:
 	}
 	cObject *GetObjectNearest( cObject *oTarget )
 	{
+		if ( !GetObjectListSize( ) )
+			return nullptr;
+
 		cObject *oNearest = nullptr;
 		float fDistance = 1000.0f;
 
 		for ( int i = 0; i != vecObjects.size( ); i++ )
 		{
-			cObject *curObject = reinterpret_cast<cObject*>(&vecObjects[i]);
+			cObject *curObject = reinterpret_cast<cObject *>(&vecObjects[i]);
 			if ( !curObject )
 				continue;
 			if ( curObject->iIndex == oTarget->iIndex

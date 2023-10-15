@@ -6,51 +6,15 @@ namespace Threads
 {
 	void GameLoop( )
 	{
-		//fill object list
-		ObjectManager.Add( 1, { 10.0f, 10.0f }, "PLAYER" );
-		ObjectManager.Add( 2, { 250.0f, 250.0f }, "ENEMY 1" );
-		ObjectManager.Add( 3, { 650.0f, 650.0f }, "ENEMY 2" );
-
-		//get localplayer
-		cObject *playerLocal = ObjectManager.GetObjectByIndex( 1 );
-		playerLocal->MoveAbs( 500, 500 );
+		Game::CreateObjectList( );
+		Game::Player = Game::GetPlayer( );
+		Game::Player->MoveAbs( 500, 500 );
 
 		while ( !Globals::bForceExit )
 		{
-			//controls
-			{
-				if ( GetAsyncKeyState( VK_RIGHT ) )
-				{
-					playerLocal->MoveRel( 1, 0 );
-				}
-				if ( GetAsyncKeyState( VK_LEFT ) )
-				{
-					playerLocal->MoveRel( -1, 0 );
-				}
-				if ( GetAsyncKeyState( VK_UP ) )
-				{
-					playerLocal->MoveRel( 0, -1 );
-				}
-				if ( GetAsyncKeyState( VK_DOWN ) )
-				{
-					playerLocal->MoveRel( 0, 1 );
-				}
-			}
-
-			//hitbox register
-			cObject *playerNearest = ObjectManager.GetObjectNearest( playerLocal );
-			bool bCollidingWithNearest = false;
-
-			if ( playerNearest )
-			{
-				bCollidingWithNearest = playerNearest->CheckCollider( playerLocal );
-			}
-
-			if ( GetAsyncKeyState( VK_RETURN ) && bCollidingWithNearest )
-			{
-				playerLocal->RunAttack( playerNearest );
-			}
-
+			Game::EnemyClosest = ObjectManager.GetObjectNearest( Game::Player );
+			Game::IsPlayerCollidingWithNearestEnemy = Game::Player->CheckCollider( Game::EnemyClosest );
+			Game::RunKeyBindings( );
 			Globals::fTick++;
 			Sleep( 1 );
 		}

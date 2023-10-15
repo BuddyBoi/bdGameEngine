@@ -88,7 +88,7 @@ class cRenderer
 		UpdateWindow( hWindow );
 		return true;
 	}
-	bool bUninitD3D()
+	bool bUninitD3D( )
 	{
 		if ( pFont )
 		{
@@ -100,7 +100,7 @@ class cRenderer
 		dObject->Release( );
 		return true;
 	}
-	bool bInitD3D()
+	bool bInitD3D( )
 	{
 		HRESULT hrDirectD3Create = Direct3DCreate9Ex( D3D_SDK_VERSION, &dObject );
 		ZeroMemory( &dParams, sizeof( dParams ) );
@@ -255,4 +255,4 @@ public:
 		return true;
 	}
 };
-cRenderer RenderManager( 1 );
+static cRenderer RenderManager( 1 );

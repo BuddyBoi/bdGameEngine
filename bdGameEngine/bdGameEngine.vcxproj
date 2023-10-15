@@ -139,6 +139,7 @@
     <ClInclude Include="Globals.hpp" />
     <ClInclude Include="Include.hpp" />
     <ClInclude Include="Renderer.hpp" />
+    <ClInclude Include="ThreadManager.hpp" />
     <ClInclude Include="Threads.hpp" />
     <ClInclude Include="Util.hpp" />
   </ItemGroup>

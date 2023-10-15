@@ -11,5 +11,6 @@
     <ClInclude Include="Globals.hpp" />
     <ClInclude Include="Util.hpp" />
     <ClInclude Include="Game.hpp" />
+    <ClInclude Include="ThreadManager.hpp" />
   </ItemGroup>
 </Project>
