@@ -53,9 +53,9 @@ namespace Threads
 
 	bool bSetup( )
 	{
-		if ( !bCreateThread( Main )
-			|| !bCreateThread( Render )
-			|| !bCreateThread( GameLoop )
+		if( !ThreadManager.Create(Main)
+			|| !ThreadManager.Create(Render)
+			|| !ThreadManager.Create(GameLoop)
 			)
 			return false;
 

@@ -6,6 +6,8 @@ namespace Globals
 	bool bForceExit = false;
 	float fTime = 0.0f;
 	float fTick = 0.0f;
+
+	int iThreadDefExit = 1027;
 }
 
 bool bCreateThread( void *pFuncAddress )

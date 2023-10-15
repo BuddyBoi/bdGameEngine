@@ -60,6 +60,7 @@ struct Rect
 
 #include "Globals.hpp"
 #include "Util.hpp"
+#include "ThreadManager.hpp"
 #include "Renderer.hpp"
 #include "GameManager.hpp"
 #include "Threads.hpp"
