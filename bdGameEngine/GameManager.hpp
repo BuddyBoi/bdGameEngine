@@ -15,19 +15,39 @@ public:
 	{ }
 };
 
+//ObjectList
+enum E_OBJECT_TYPE
+{
+	OTYPE_INVALID = 0,
+	OTYPE_ENTITY = 1, //Players, Characters, Items, Etc
+	OTYPE_STATIC = 2, //Walls, Blockades, Boundaries, Terrain, Decorations, Etc
+	OTYPE_MAX = 3,
+};
+
+//EntityList
+enum E_ENTITY_TYPE
+{
+	ETYPE_INVALID = 0,
+	ETYPE_PLAYER = 1,
+	ETYPE_CHARACTER = 2,
+	ETYPE_ITEM = 3,
+	ETYPE_CONTAINER = 4,
+	ETYPE_MAX = 5,
+};
+
 class cObject
 {
 public:
 	int iIndex = 0; //specific reference id		
 	int iItemId = 0; //item type
 	Vector2D vPosition { 0.0f, 0.0f };
+	float fAngle = 0.0f; //UP = 0, RIGHT = 90, DOWN = 180, LEFT = 270
 	float fSize = 25.0f;
 	std::string sTag = "NONE";
 
 	//temp player vars
 	float fHealth = 100.0f;
-	float fDamage = 25.0f;
-
+	float fDamage = 25.0f;	
 	void MoveRel( float x, float y )
 	{
 		vPosition.x = vPosition.x + x;
@@ -43,18 +63,7 @@ public:
 		if ( !enemy )
 			return;
 
-		const float fDelay = 50.0f;
-		static float fLastAttack = 0.0f;
-
-		if ( Globals::fTick < (fLastAttack + fDelay) )
-		{
-			printf( "ATTACK AWAIT DELAY\n" );
-			return;
-		}
-
-		//set attack
-		enemy->fHealth -= this->fDamage;
-		fLastAttack = Globals::fTick;
+		enemy->fHealth -= this->fDamage;		
 	}
 	bool CheckCollider( cObject *oTarget )
 	{
@@ -73,6 +82,8 @@ public:
 	}
 	cObject( int index, int item, Vector2D pos, std::string tag = "NONE" ) : iIndex( index ), iItemId( item ), vPosition( pos ), sTag( tag )
 	{ }
+	cObject( int index, int item, Vector2D pos, float angle, std::string tag = "NONE" ) : iIndex( index ), iItemId( item ), vPosition( pos ), fAngle( angle ), sTag( tag )
+	{ }
 	cObject( )
 	{ }
 };
@@ -90,7 +101,7 @@ public:
 	{
 		return vecObjects.size( );
 	}
-	std::vector<cObject *> GetObjectsList( )
+	std::vector<cObject *> GetObjectsList( int iFilter = 0 )
 	{
 		std::vector<cObject *> vecReturn { };
 		if ( !vecObjects.size( ) )
@@ -102,14 +113,20 @@ public:
 			if ( !curObject )
 				continue;
 
+			if ( iFilter )
+			{
+				if ( curObject->iItemId != iFilter )
+					continue;
+			}
+
 			vecReturn.push_back( curObject );
 		}
 
 		return vecReturn;
 	}
-	bool Add( int item, Vector2D pos, std::string tag = "NONE" )
+	bool Add( int item, Vector2D pos, float angle, std::string tag )
 	{
-		cObject obj( vecObjects.size( ) + 1, item, pos, tag );
+		cObject obj( vecObjects.size( ) + 1, item, pos, angle, tag );
 		vecObjects.push_back( obj );
 		return true;
 	}
@@ -122,18 +139,25 @@ public:
 	}
 	cObject *GetObjectByTag( std::string sTag )
 	{
-		for ( cObject x : vecObjects )
+		for ( int i = 0; i != vecObjects.size( ); i++ )
 		{
-			if ( x.sTag == sTag )
-				return reinterpret_cast<cObject *>(&x);
+			if( vecObjects[i].GetTag() == sTag )
+				return reinterpret_cast<cObject *>(&vecObjects[i]);
 		}
 	}
 	cObject *GetObjectByIndex( int iIndex )
 	{
 		return reinterpret_cast<cObject *>(&vecObjects[iIndex - 1]);
 	}
-	cObject *GetObjectNearest( cObject *oTarget )
+	cObject *GetObjectNearest( cObject *oTarget, int iFilterType = 0 )
 	{
+		/* iFilterType:
+		0 = None
+		1 = Characters
+		2 = Static objects (Walls, Terrain, Blockades, Etc)
+		3 = Items
+		*/
+
 		if ( !GetObjectListSize( ) )
 			return nullptr;
 
@@ -145,6 +169,10 @@ public:
 			cObject *curObject = reinterpret_cast<cObject *>(&vecObjects[i]);
 			if ( !curObject )
 				continue;
+
+			if ( curObject->iItemId == 4 )
+				continue;
+
 			if ( curObject->iIndex == oTarget->iIndex
 				|| !curObject->fSize
 				|| !curObject->fHealth )

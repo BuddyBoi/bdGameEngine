@@ -12,5 +12,6 @@
     <ClInclude Include="Util.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="ThreadManager.hpp" />
+    <ClInclude Include="EventManager.hpp" />
   </ItemGroup>
 </Project>
